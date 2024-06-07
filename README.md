@@ -157,3 +157,30 @@ The following exceptions may be raised when using HomeHarvest:
 - `InvalidListingType` - valid options: `for_sale`, `for_rent`, `sold`
 - `InvalidDate` - date_from or date_to is not in the format YYYY-MM-DD.
 - `AuthenticationError` - Realtor.com token request failed.
+
+### JSON Example
+
+```py
+from homeharvest import scrape_property
+from datetime import datetime
+
+# Generate filename based on current timestamp
+current_timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+filename = f"HomeHarvest_{current_timestamp}.json"
+
+properties = scrape_property(
+  location="San Diego, CA",
+  listing_type="sold",  # or (for_sale, for_rent, pending)
+  past_days=30,  # sold in last 30 days - listed in last 30 days if (for_sale, for_rent)
+
+  # date_from="2023-05-01", # alternative to past_days
+  # date_to="2023-05-28",
+  # foreclosure=True
+  # mls_only=True,  # only fetch MLS listings
+)
+print(f"Number of properties: {len(properties)}")
+
+# Export to csv
+properties.to_json(filename, orient='records')
+print(properties.head())
+```
